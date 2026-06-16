@@ -1,10 +1,8 @@
-# Next.js Fullstack Opinionated
+# Hono Serverless Opinionated
 
-Next.js만으로 웹페이지와 Rest API를 함께 제공할 때 사용할 수 있는 예시
-프로젝트입니다.
-
-백엔드 개발자 입장에서 Next.js를 Spring Boot와 비교했을 때 부족한 부분을 제
-의견대로(opinionated) 채워넣었습니다.
+Hono를 사용해서 웹 백엔드 서버를 구현할 때 Spring Boot를 선호하는 개발자
+입장에서 편하게 쓸 수 있는 라이브러리를 선택하고(=Opinionated) 예시 프로젝트를
+구현한 저장소입니다.
 
 ## Run
 
@@ -58,8 +56,8 @@ deno run run-image
 - Lambda 컨테이너 이미지는 새 버전을 처음 실행할 때 ECR에서 이미지를 pull하면서
   Cold Start 시간이 증가할 수 있습니다.
 - Provisioned Concurrency를 사용하면 이미지를 미리 pull하고 런타임 초기화를
-  완료한 상태로 실행 환경을 준비하므로, 실제 사용자 요청에서는 Cold Start가
-  거의 노출되지 않습니다.
+  완료한 상태로 실행 환경을 준비하므로, 실제 사용자 요청에서는 Cold Start가 거의
+  노출되지 않습니다.
 - 운영 트래픽은 alias(예: `prod`)로만 전달하고, 새 버전에 Provisioned
   Concurrency가 준비된 뒤 alias를 전환하면 배포 직후의 단 한번 Cold Start도
   사용자에게 노출되지 않습니다.
@@ -448,8 +446,3 @@ AI가 코드를 쏟아내는 지금은 컴파일 타임에 더 많은 에러를 
 (위 list를 아래 Code Examples 항목에 추가하기)
 
 ### Code Examples (WIP)
-
-## Branch 관리
-
-1. 애플리케이션 로직 관련 업데이트는 main 브랜치에서 한다.
-2. 파생 브랜치로의 변경사항은 rebase를 한다.
