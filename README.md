@@ -7,7 +7,7 @@ Hono를 사용해서 웹 백엔드 서버를 구현할 때 Spring Boot를 선호
 ## Run
 
 ```bash
-git clone https://github.com/myeongjae-kim/nextjs-fullstack-opinionated.git
+git clone https://github.com/myeongjae-kim/hono-serverless-opinionated.git
 npm i -g start-server-and-test # 통합테스트용
 deno install
 deno run setup
