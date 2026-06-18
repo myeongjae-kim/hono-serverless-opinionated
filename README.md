@@ -8,7 +8,9 @@ Use Case, Port, Adapter로 나뉜 백엔드 구조를 구성합니다. Docker im
 AWS Lambda 컨테이너 런타임에서 실행할 수 있고, 필요하면 ECS 같은 컨테이너 기반
 실행 환경으로 옮길 수 있게 설계했습니다.
 
-자세한 설계 배경과 기술 선택 이유는 [article.md](./article.md)를 참고하세요.
+자세한 설계 배경과 기술 선택 이유는
+[Spring Boot가 부럽지 않은 Hono 기반 TypeScript 서버리스 백엔드와 예시 프로젝트](https://myeongjae.kim/blog/2026/06/17/hono-serverless-like-spring-boot)를
+참고하세요.
 
 ## Overview
 
@@ -207,4 +209,4 @@ AWS infrastructure examples are under `infra/terraform`.
 
 ## Related Article
 
-- [Spring Boot가 부럽지 않은 Hono 기반 TypeScript 서버리스 백엔드와 예시 프로젝트](./article.md)
+- [Spring Boot가 부럽지 않은 Hono 기반 TypeScript 서버리스 백엔드와 예시 프로젝트](https://myeongjae.kim/blog/2026/06/17/hono-serverless-like-spring-boot)
