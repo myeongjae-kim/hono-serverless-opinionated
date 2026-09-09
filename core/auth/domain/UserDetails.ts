@@ -1,15 +1,15 @@
-import { z } from '@hono/zod-openapi';
+import { z } from "zod";
 
 export const userDetailsSchema = z.object({
-  ulid: z.string().openapi({ description: 'The user ulid' }),
-  role: z.string().openapi({ description: 'The user role' }),
-}).openapi({ description: 'The user details schema' });
+  ulid: z.string().describe("The user ulid"),
+  role: z.string().describe("The user role"),
+}).describe("The user details schema");
 
 type UserDetailsType = z.infer<typeof userDetailsSchema>;
 
 export class UserDetails implements UserDetailsType {
   constructor(
     public readonly ulid: string,
-    public readonly role: string
-  ) { }
+    public readonly role: string,
+  ) {}
 }

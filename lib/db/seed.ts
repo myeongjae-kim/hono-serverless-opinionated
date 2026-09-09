@@ -1,4 +1,3 @@
-
 async function seed() {
   /* example seed
   const loginId = 'test@test.com';
@@ -23,10 +22,10 @@ async function seed() {
 
 seed()
   .catch((error) => {
-    console.error('Seed process failed:', error);
+    console.error("Seed process failed:", error);
     Deno.exit(1);
   })
   .finally(() => {
-    console.info('Seed process finished. Exiting...');
+    console.info("Seed process finished. Exiting...");
     Deno.exit(0);
   });

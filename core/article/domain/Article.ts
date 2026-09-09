@@ -1,12 +1,12 @@
-import { z } from '@hono/zod-openapi';
+import { z } from "zod";
 
 export const articleSchema = z.object({
-  id: z.number().openapi({ description: 'The article id' }),
-  title: z.string().openapi({ description: 'The article title' }),
-  content: z.string().openapi({ description: 'The article content' }),
-  createdAt: z.date().openapi({ description: 'The article created at' }),
-  updatedAt: z.date().openapi({ description: 'The article updated at' }),
-}).openapi({ description: 'The article schema' });
+  id: z.number().describe("The article id"),
+  title: z.string().describe("The article title"),
+  content: z.string().describe("The article content"),
+  createdAt: z.date().describe("The article created at"),
+  updatedAt: z.date().describe("The article updated at"),
+}).describe("The article schema");
 
 export type Article = z.infer<typeof articleSchema>;
 

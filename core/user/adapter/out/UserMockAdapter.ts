@@ -1,23 +1,28 @@
-import { SqlOptions } from '@/core/common/domain/SqlOptions.ts';
-import { UserCommandPort } from '@/core/user/application/port/out/UserCommandPort.ts';
-import { UserQueryPort, UserWithPasswordHash } from '@/core/user/application/port/out/UserQueryPort.ts';
-import { User, UserSignUp } from '@/core/user/domain/User.ts';
+import type { SqlOptions } from "@/core/common/domain/SqlOptions.ts";
+import type { UserCommandPort } from "@/core/user/application/port/out/UserCommandPort.ts";
+import type {
+  UserQueryPort,
+  UserWithPasswordHash,
+} from "@/core/user/application/port/out/UserQueryPort.ts";
+import type { User, UserSignUp } from "@/core/user/domain/User.ts";
 
 export class UserMockAdapter implements UserCommandPort, UserQueryPort {
   private users: UserWithPasswordHash[] = [
     {
       id: 1,
-      ulid: '01ARZ3NDEKTSV4RRFFQ69G5FAV',
-      name: 'Test User',
-      loginId: 'test@example.com',
-      passwordHash: '$2b$10$rOzJqZqZqZqZqZqZqZqZqO', // dummy hash
-      role: 'member',
+      ulid: "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+      name: "Test User",
+      loginId: "test@example.com",
+      passwordHash: "$2b$10$rOzJqZqZqZqZqZqZqZqZqO", // dummy hash
+      role: "member",
       createdAt: new Date(),
       updatedAt: new Date(),
     },
   ];
 
-  async createUser(userData: UserSignUp & { ulid: string; passwordHash: string }): Promise<Pick<User, 'id' | 'ulid'>> {
+  createUser(
+    userData: UserSignUp & { ulid: string; passwordHash: string },
+  ): Promise<Pick<User, "id" | "ulid">> {
     const newId = this.users.length + 1;
     const newUser: UserWithPasswordHash = {
       id: newId,
@@ -25,7 +30,7 @@ export class UserMockAdapter implements UserCommandPort, UserQueryPort {
       name: userData.name || null,
       loginId: userData.loginId,
       passwordHash: userData.passwordHash,
-      role: 'member',
+      role: "member",
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -36,12 +41,15 @@ export class UserMockAdapter implements UserCommandPort, UserQueryPort {
     });
   }
 
-  async findByLoginId(loginId: string, _sqlOptions: SqlOptions): Promise<UserWithPasswordHash | null> {
+  findByLoginId(
+    loginId: string,
+    _sqlOptions: SqlOptions,
+  ): Promise<UserWithPasswordHash | null> {
     const user = this.users.find((u) => u.loginId === loginId);
     return Promise.resolve(user ? { ...user } : null);
   }
 
-  async findByUlid(ulid: string, _sqlOptions: SqlOptions): Promise<User | null> {
+  findByUlid(ulid: string, _sqlOptions: SqlOptions): Promise<User | null> {
     const user = this.users.find((u) => u.ulid === ulid);
     if (!user) {
       return Promise.resolve(null);

@@ -1,31 +1,40 @@
-import { Controller } from '@/app/api/config/Controller.ts';
-import { articleListSchema } from '@/core/article/domain/Article.ts';
-import { applicationContext } from '@/core/config/applicationContext.ts';
-import { createRoute } from '@hono/zod-openapi';
+import {
+  articleListResponseSchema,
+  toArticleResponse,
+} from "@/app/api/articles/ArticleResponse.ts";
+import { Controller } from "@/app/api/config/Controller.ts";
+import type { FindAllArticlesUseCase } from "@/core/article/application/port/in/FindAllArticlesUseCase.ts";
+import { createRoute } from "@hono/zod-openapi";
 
 const route = createRoute({
-  method: 'get',
-  path: '/articles',
+  method: "get",
+  path: "/articles",
   security: [{
     bearerAuth: [],
   }],
-  tags: ['articles'],
+  tags: ["articles"],
   responses: {
     200: {
-      description: 'The article list response schema',
+      description: "The article list response schema",
       content: {
-        'application/json': {
-          schema: articleListSchema,
+        "application/json": {
+          schema: articleListResponseSchema,
         },
       },
     },
   },
-})
+});
 
-export default Controller().openapi(route, async (c) => {
-  const articles = await applicationContext().get('FindAllArticlesUseCase').findAll();
+const buildController = (useCase: FindAllArticlesUseCase) =>
+  Controller().openapi(route, async (c) => {
+    const articles = await useCase.findAll();
 
-  return c.json(articleListSchema.parse({
-    content: articles
-  }));
-})
+    return c.json(articleListResponseSchema.parse({
+      content: articles.map(toArticleResponse),
+    }));
+  });
+export function createFindAllArticlesController(
+  useCase: FindAllArticlesUseCase,
+): ReturnType<typeof buildController> {
+  return buildController(useCase);
+}

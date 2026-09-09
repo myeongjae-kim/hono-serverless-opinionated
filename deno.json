@@ -12,7 +12,7 @@
     "@std/ulid": "jsr:@std/ulid@^1.0.0",
     "drizzle-kit": "npm:drizzle-kit@^0.31.8",
     "drizzle-orm": "npm:drizzle-orm@^0.45.1",
-    "hono": "jsr:@hono/hono@^4.11.4",
+    "hono": "npm:hono@4.11.4",
     "inversify-typesafe-spring-like": "jsr:@myeongjae-kim/inversify-typesafe-spring-like@^0.5.4",
     "jsonwebtoken": "npm:jsonwebtoken@^9.0.3",
     "minimatch": "npm:minimatch@^10.1.1",
@@ -25,16 +25,18 @@
     "dev": "deno run -A --watch --env-file=.env app/index.ts",
     "start": "deno run -A --env-file=.env app/index.ts",
     "_start": "deno task start --port=3031",
-    "test": "deno test -A --ignore='**/*.int.test.*'",
+    "test": "deno task architecture && deno test -A --ignore='**/*.int.test.*'",
     "_intTest": "deno test -A --env-file=.env --ignore='**/*.unit.test.*' test/",
-    "intTest": "start-server-and-test 'deno task _start' http://localhost:3031 'deno task _intTest'",
+    "intTest": "deno run -A --env-file=.env scripts/runIntTests.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:migrate:local": "drizzle-kit migrate --config=drizzle.config.local.ts",
     "db:studio": "drizzle-kit studio",
     "build": "bash infra/build-image.sh",
     "run-image": "bash infra/run-image-on-local.sh",
-    "detect-runtime-downloads": "deno run -A infra/detect-runtime-downloads.ts"
+    "detect-runtime-downloads": "deno run -A infra/detect-runtime-downloads.ts",
+    "architecture": "deno run --allow-read scripts/checkArchitecture.ts",
+    "check": "deno task architecture && deno check app/index.ts && deno lint && deno fmt --check"
   },
   "compilerOptions": {
     "experimentalDecorators": true

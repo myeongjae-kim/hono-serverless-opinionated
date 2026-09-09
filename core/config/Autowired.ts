@@ -1,4 +1,4 @@
-import { type Beans } from '@/core/config/beanConfig.ts';
-import { returnAutowired } from 'inversify-typesafe-spring-like';
+import type { AutowiredBeans } from "@/core/config/DependencyTokens.ts";
+import { returnAutowired } from "inversify-typesafe-spring-like";
 
-export const { Autowired } = returnAutowired<Beans>();
+export const { Autowired } = returnAutowired<AutowiredBeans>();

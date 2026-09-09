@@ -88,11 +88,6 @@ infra/
 
 - [Deno](https://deno.com/)
 - Docker / Docker Compose
-- `start-server-and-test` for integration tests
-
-```bash
-npm i -g start-server-and-test
-```
 
 ## Environment Variables
 
@@ -160,6 +155,18 @@ OpenAPI documentation is enabled when `PROFILE !== "prod"`.
 | `/api/swagger` | OpenAPI JSON            |
 | `/api/docs`    | Scalar API reference UI |
 
+## Backend Boundaries
+
+- [의존성 주입, 트랜잭션, API 계약과 검증](docs/features/backend-architecture.md)
+- [인증 API와 기존 토큰 전환 안내](docs/features/auth.md)
+
+`UseCaseBeanConfig.ts` registers inbound services. API composition modules
+inject these use cases into controller factories. Transactions propagate through
+a shared runner, and application services depend on ports rather than DB or JWT
+implementations.
+
+Run `deno task check` for architecture, type, lint, and formatting checks.
+
 ## Testing
 
 Unit tests:
@@ -174,8 +181,10 @@ Integration tests:
 deno task intTest
 ```
 
-`deno task intTest` uses `start-server-and-test` to start the server on port
-`3031`, wait until it responds, and then run integration tests under `test/`.
+`deno task intTest` uses a Deno script to start the server on port `3031` (or
+`TEST_PORT`), wait for readiness, run integration tests, and stop the server.
+Use a dedicated MySQL test database for all three DB URLs; API tests delete
+data.
 
 API integration tests use `pactum`.
 

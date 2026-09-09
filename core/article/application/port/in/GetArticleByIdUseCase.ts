@@ -1,5 +1,5 @@
-import { Article } from '@/core/article/domain/Article.ts';
+import type { Article } from "@/core/article/domain/Article.ts";
 
 export interface GetArticleByIdUseCase {
-  get(id: Article['id']): Promise<Article>;
+  get(id: Article["id"]): Promise<Article>;
 }

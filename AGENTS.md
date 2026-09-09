@@ -133,15 +133,16 @@ import { article } from "@/lib/db/schema.ts";
 ### Zod Schema
 
 - 도메인 모델은 Zod schema로 정의
-- OpenAPI 메타데이터 포함 (`.openapi({ description: "..." })`)
+- Domain schema는 일반 `zod`를 사용하고 설명은 `.describe()`로 정의
+- OpenAPI 전용 메타데이터와 JSON 응답 schema는 API 계층에서 정의
 - 타입은 `z.infer<typeof schema>`로 추론
 
 ```typescript
 export const articleSchema = z.object({
-  id: z.number().openapi({ description: "The article id" }),
-  title: z.string().openapi({ description: "The article title" }),
+  id: z.number().describe("The article id"),
+  title: z.string().describe("The article title"),
   // ...
-}).openapi({ description: "The article schema" });
+}).describe("The article schema");
 
 export type Article = z.infer<typeof articleSchema>;
 ```
@@ -204,9 +205,17 @@ const route = createRoute({
   responses: {/* ... */},
 });
 
-export default Controller().openapi(route, async (c) => {
-  // 구현
-});
+const buildController = (useCase: CreateArticleUseCase) =>
+  Controller().openapi(route, async (c) => {
+    const result = await useCase.create(c.req.valid("json"));
+    return c.json(result, 200);
+  });
+
+export function createArticleController(
+  useCase: CreateArticleUseCase,
+): ReturnType<typeof buildController> {
+  return buildController(useCase);
+}
 ```
 
 ### 규칙
@@ -215,7 +224,9 @@ export default Controller().openapi(route, async (c) => {
 - `Controller()` 팩토리 사용
 - `tags` 배열에 도메인명 추가 (복수형: `['articles']`)
 - `security`에 `bearerAuth` 포함 (인증 필요한 경우)
-- `applicationContext().get("UseCaseName")`으로 Use Case 호출
+- 컨트롤러는 UseCase 인터페이스를 인자로 받는 팩토리로 정의
+- `ApiControllerConfig.ts`, `ApiRuntimeConfig.ts`만 `getUseCase()`로 의존성 조회
+- 응답 schema를 `responses`에 선언하고 `c.json()`으로 반환
 
 ### 디렉토리 구조
 
@@ -230,7 +241,7 @@ export default Controller().openapi(route, async (c) => {
 ### Autowired 데코레이터
 
 - `@Autowired("BeanName")` 사용
-- `beanConfig.ts`에 Bean 정의
+- 타입은 `DependencyTokens.ts`, UseCase 등록은 `UseCaseBeanConfig.ts`에 정의
 
 ```typescript
 constructor(
@@ -241,21 +252,29 @@ constructor(
 
 ### Bean 등록
 
-- `beanConfig.ts`에서 모든 Bean 정의
+- `beanConfig.ts`에서 `UseCaseBeanConfig.ts`와 Adapter 등록을 조립
+- 내부 서비스는 `Autowired.ts`, DB Adapter는 `InfrastructureAutowired.ts` 사용
+- `UseCaseBeans`, `OutboundPortBeans`, `ConfigurationBeans`의 타입을 분리
 
 ## 데이터베이스 접근 및 트랜잭션
 
 ### SqlOptions
 
-- drizzle은 Spring Boot와 달리 트랜잭션 읽기전용 여부(replica 사용 여부)를
-  thread local로 관리하지 않으므로 명시적으로 설정을 전달해야 합니다.
+- 가장 바깥 호출에서 읽기전용 여부(replica 사용 여부)를 명시합니다.
+- 중첩 호출은 AsyncLocalStorage를 통해 현재 트랜잭션에 참여합니다.
+- 쓰기 트랜잭션 내부의 조회는 같은 Primary 트랜잭션을 사용합니다.
 - `useReplica: boolean` 속성을 포함합니다.
 - **읽기 전용 로직**: 매개변수로 `SqlOptions`를 받아 가장 바깥쪽에서 읽기전용
   여부를 선택할 수 있게 합니다.
 - **쓰기 로직**: `SqlOptions`를 매개변수로 받지 않고 항상 Primary DB를
   사용하도록 강제합니다.
 
-### TransactionTemplate
+### TransactionPort / TransactionTemplate
+
+- Application은 `common/application/port/out/TransactionPort.ts`의 `run()` 사용
+- Drizzle 구현은 `common/adapter/out/TransactionTemplate.ts`에 위치
+- 중첩 실패는 rollback-only로 표시하고, 읽기 전용 범위에서 쓰기 전환 금지
+- 트랜잭션 내 DB 쿼리는 순차 await하며 종료 후 비동기 작업을 남기지 않음
 
 - 모든 데이터베이스 쿼리는 `TransactionTemplate`의 `execute` 메서드 내에서
   실행되어야 합니다.
@@ -310,8 +329,8 @@ export class UserPersistenceAdapter implements UserCommandPort, UserQueryPort {
   - 포트 변경: `deno task start --port=3031` (내부적으로 `app/index.ts`가
     `--port`를 파싱)
 - 테스트: `deno task test`, `deno task intTest`
-  - `intTest`는 서버를 먼저 띄운 뒤 테스트를 실행합니다 (`start-server-and-test`
-    사용)
+  - `intTest`는 `scripts/runIntTests.ts`로 서버 시작, 테스트 실행, 서버 종료를
+    관리합니다
 - OpenAPI 문서: `app/serverApp.ts`에서 제공하며, `PROFILE !== 'prod'`일 때만
   활성화됩니다.
   - `/api/swagger`: OpenAPI JSON
@@ -415,5 +434,6 @@ describe("POST /api/articles", intTestDefaultOptions, () => {
 - 작업이 끝나면 아래를 실행하여 코드 품질을 확인합니다:
   - `deno fmt`
   - `deno lint`
+  - `deno task architecture`
   - (필요 시) `deno check`
 - 에러가 발생하면 수정한 후 다시 실행합니다

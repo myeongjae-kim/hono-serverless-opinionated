@@ -25,7 +25,9 @@ function parseArgs(args: string[]): DetectOptions {
   return { durationMs, port };
 }
 
-async function readStreamToText(stream: ReadableStream<Uint8Array> | null): Promise<string> {
+async function readStreamToText(
+  stream: ReadableStream<Uint8Array> | null,
+): Promise<string> {
   if (!stream) return "";
 
   const reader = stream.getReader();
@@ -201,4 +203,3 @@ async function main(): Promise<void> {
 if (import.meta.main) {
   await main();
 }
-

@@ -1,5 +1,5 @@
-import { Article } from '@/core/article/domain/Article.ts';
+import type { Article } from "@/core/article/domain/Article.ts";
 
 export interface DeleteArticleUseCase {
-  delete(id: Article['id']): Promise<void>;
+  delete(id: Article["id"]): Promise<void>;
 }

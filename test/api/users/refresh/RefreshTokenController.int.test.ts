@@ -1,37 +1,37 @@
-import { AuthResponse } from '@/core/common/domain/AuthResponse.ts';
-import { user } from '@/lib/db/schema.ts';
-import { dbLocal } from '@/test/dbLocal.ts';
-import { intTestDefaultOptions } from '@/test/intTestDefaultOptions.ts';
-import { setupIntTest } from '@/test/setupIntTest.ts';
-import { beforeAll, describe, it } from '@std/testing/bdd';
-import pactum from 'pactum';
+import type { AuthResponse } from "@/core/common/domain/AuthResponse.ts";
+import { user } from "@/lib/db/schema.ts";
+import { dbLocal } from "@/test/dbLocal.ts";
+import { intTestDefaultOptions } from "@/test/intTestDefaultOptions.ts";
+import { setupIntTest } from "@/test/setupIntTest.ts";
+import { beforeAll, describe, it } from "@std/testing/bdd";
+import pactum from "pactum";
 
 const spec = pactum.spec;
 
-describe('POST /api/users/refresh', intTestDefaultOptions, () => {
+describe("POST /api/users/refresh", intTestDefaultOptions, () => {
   beforeAll(() => {
     setupIntTest();
   });
 
-  it('should return 200 with new access_token and refresh_token', async () => {
+  it("should return 200 with new access_token and refresh_token", async () => {
     await dbLocal.delete(user);
 
     // First sign up to get tokens
 
     const signUpResponse: AuthResponse = await spec()
-      .post('/api/users/signup')
+      .post("/api/users/signup")
       .withBody({
-        loginId: 'refreshtest',
-        password: 'password123',
+        loginId: "refreshtest",
+        password: "password123",
       })
       .expectStatus(200)
-      .returns('res.body');
+      .returns("res.body");
 
     const refreshToken = signUpResponse.refresh_token;
 
     // Then refresh token
     await spec()
-      .post('/api/users/refresh')
+      .post("/api/users/refresh")
       .withBody({
         refresh_token: refreshToken,
       })
@@ -42,25 +42,35 @@ describe('POST /api/users/refresh', intTestDefaultOptions, () => {
       });
   });
 
-  it('should return 401 when refresh_token is invalid', async () => {
+  it("should return 401 when refresh_token is invalid", async () => {
     await spec()
-      .post('/api/users/refresh')
+      .post("/api/users/refresh")
       .withBody({
-        refresh_token: 'invalid-token',
+        refresh_token: "invalid-token",
       })
       .expectStatus(401)
       .expectJsonLike({
-        'code': '',
-        'error': 'DOMAIN_UNAUTHORIZED_ERROR',
-        'status': 401,
-        'timestamp': /.*/,
+        "code": "",
+        "error": "DOMAIN_UNAUTHORIZED_ERROR",
+        "status": 401,
+        "timestamp": /.*/,
       });
   });
 
-  it('should return 400 when refresh_token is missing', async () => {
+  it("should return 400 when refresh_token is missing", async () => {
     await spec()
-      .post('/api/users/refresh')
+      .post("/api/users/refresh")
       .withBody({})
       .expectStatus(400);
+  });
+  it("should reject an access token submitted as a refresh token", async () => {
+    const tokens: AuthResponse = await spec().post("/api/users/signup")
+      .withBody({
+        loginId: `token-purpose-${crypto.randomUUID()}`,
+        password: "password123",
+      })
+      .expectStatus(200).returns("res.body");
+    await spec().post("/api/users/refresh")
+      .withBody({ refresh_token: tokens.access_token }).expectStatus(401);
   });
 });

@@ -3,7 +3,6 @@
   "specifiers": {
     "jsr:@denosaurs/plug@^1.1.0": "1.1.0",
     "jsr:@felix/bcrypt@^1.0.8": "1.0.8",
-    "jsr:@hono/hono@^4.11.4": "4.11.4",
     "jsr:@myeongjae-kim/inversify-typesafe-spring-like@~0.5.4": "0.5.4",
     "jsr:@std/assert@^1.0.14": "1.0.16",
     "jsr:@std/assert@^1.0.15": "1.0.16",
@@ -26,6 +25,7 @@
     "npm:@hono/zod-openapi@^1.2.0": "1.2.0_hono@4.11.4_zod@4.3.5",
     "npm:drizzle-kit@~0.31.8": "0.31.8_esbuild@0.25.12",
     "npm:drizzle-orm@~0.45.1": "0.45.1_mysql2@3.16.1",
+    "npm:hono@4.11.4": "4.11.4",
     "npm:inversify-typesafe@~0.5.4": "0.5.4_reflect-metadata@0.2.2",
     "npm:inversify@^7.10.8": "7.11.0",
     "npm:jsonwebtoken@^9.0.3": "9.0.3",
@@ -49,9 +49,6 @@
       "dependencies": [
         "jsr:@denosaurs/plug"
       ]
-    },
-    "@hono/hono@4.11.4": {
-      "integrity": "aaf7b9d5a6b2422b0778c091b712ee1f018bc7e82138067d21eb27d7c2e1f5be"
     },
     "@myeongjae-kim/inversify-typesafe-spring-like@0.5.4": {
       "integrity": "8757e1f62be4e4b1022c3b801aab62a65312cc4d38020ea2eef0536f7f914a89",
@@ -419,21 +416,13 @@
       "integrity": "sha512-U2xYsPrJTz5za2TExi5lg8qOWf8TEVBpN+pQM7B8BVA2rajtbRE9A66SLRHk8c1eGXmg+0K4Hdki6tWAsSQBUA==",
       "dependencies": [
         "@inversifyjs/common",
-        "@inversifyjs/core@9.2.0_reflect-metadata@0.2.2",
+        "@inversifyjs/core",
         "@inversifyjs/plugin",
         "@inversifyjs/reflect-metadata-utils",
         "reflect-metadata"
       ]
     },
     "@inversifyjs/core@9.2.0": {
-      "integrity": "sha512-Nm7BR6KmpgshIHpVQWuEDehqRVb6GBm8LFEuhc2s4kSZWrArZ15RmXQzROLk4m+hkj4kMXgvMm5Qbopot/D6Sg==",
-      "dependencies": [
-        "@inversifyjs/common",
-        "@inversifyjs/prototype-utils",
-        "@inversifyjs/reflect-metadata-utils"
-      ]
-    },
-    "@inversifyjs/core@9.2.0_reflect-metadata@0.2.2": {
       "integrity": "sha512-Nm7BR6KmpgshIHpVQWuEDehqRVb6GBm8LFEuhc2s4kSZWrArZ15RmXQzROLk4m+hkj4kMXgvMm5Qbopot/D6Sg==",
       "dependencies": [
         "@inversifyjs/common",
@@ -642,7 +631,7 @@
     "inversify-typesafe@0.5.4_reflect-metadata@0.2.2": {
       "integrity": "sha512-krlWKt75+4LZBmpNIjIxKiAQZ/aZ2slSHeCNPAv/bAQs6Qgh8LnGEi+QA5s7IyS+X5wI8n4urqAr+5oovpLorg==",
       "dependencies": [
-        "inversify@7.11.0_reflect-metadata@0.2.2",
+        "inversify",
         "reflect-metadata"
       ],
       "scripts": true
@@ -652,15 +641,7 @@
       "dependencies": [
         "@inversifyjs/common",
         "@inversifyjs/container",
-        "@inversifyjs/core@9.2.0"
-      ]
-    },
-    "inversify@7.11.0_reflect-metadata@0.2.2": {
-      "integrity": "sha512-yZDprSSr8TyVeMGI/AOV4ws6gwjX22hj9Z8/oHAVpJORY6WRFTcUzhnZtibBUHEw2U8ArvHcR+i863DplQ3Cwg==",
-      "dependencies": [
-        "@inversifyjs/common",
-        "@inversifyjs/container",
-        "@inversifyjs/core@9.2.0_reflect-metadata@0.2.2"
+        "@inversifyjs/core"
       ]
     },
     "is-property@1.0.2": {
@@ -864,7 +845,6 @@
   "workspace": {
     "dependencies": [
       "jsr:@felix/bcrypt@^1.0.8",
-      "jsr:@hono/hono@^4.11.4",
       "jsr:@myeongjae-kim/inversify-typesafe-spring-like@~0.5.4",
       "jsr:@std/assert@^1.0.16",
       "jsr:@std/cli@^1.0.25",
@@ -874,6 +854,7 @@
       "npm:@hono/zod-openapi@^1.2.0",
       "npm:drizzle-kit@~0.31.8",
       "npm:drizzle-orm@~0.45.1",
+      "npm:hono@4.11.4",
       "npm:jsonwebtoken@^9.0.3",
       "npm:minimatch@^10.1.1",
       "npm:mysql2@^3.16.1",

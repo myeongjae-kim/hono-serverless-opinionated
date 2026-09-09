@@ -7,20 +7,21 @@ import { ArticleControllerTestDataInitializer } from "./ArticleControllerTestDat
 
 const spec = pactum.spec;
 
-describe('POST /api/articles', intTestDefaultOptions, () => {
+describe("POST /api/articles", intTestDefaultOptions, () => {
   beforeAll(() => {
     setupIntTest();
-  })
+  });
 
-  it('should return 200', async () => {
-    const authResponse = await new ArticleControllerTestDataInitializer(dbLocal).initialize();
+  it("should return 200", async () => {
+    const authResponse = await new ArticleControllerTestDataInitializer(dbLocal)
+      .initialize();
 
     await spec()
-      .post('/api/articles')
+      .post("/api/articles")
       .withBearerToken(authResponse.access_token)
       .withBody({
-        title: 'Article 1',
-        content: 'Content of article 1',
+        title: "Article 1",
+        content: "Content of article 1",
       })
       .expectStatus(200)
       .expectJsonLike({
@@ -28,10 +29,10 @@ describe('POST /api/articles', intTestDefaultOptions, () => {
       });
   });
 
-  it('should return 401 when invalid token', async () => {
+  it("should return 401 when invalid token", async () => {
     await spec()
-      .post('/api/articles')
-      .withHeaders('Authorization', 'Bearer invalid-token-value')
+      .post("/api/articles")
+      .withHeaders("Authorization", "Bearer invalid-token-value")
       .expectStatus(401);
   });
 });

@@ -1,65 +1,75 @@
-import { AuthResponse } from '@/core/common/domain/AuthResponse.ts';
-import { user } from '@/lib/db/schema.ts';
-import { dbLocal } from '@/test/dbLocal.ts';
-import { intTestDefaultOptions } from '@/test/intTestDefaultOptions.ts';
-import { setupIntTest } from '@/test/setupIntTest.ts';
-import { beforeAll, describe, it } from '@std/testing/bdd';
-import pactum from 'pactum';
+import type { AuthResponse } from "@/core/common/domain/AuthResponse.ts";
+import { user } from "@/lib/db/schema.ts";
+import { dbLocal } from "@/test/dbLocal.ts";
+import { intTestDefaultOptions } from "@/test/intTestDefaultOptions.ts";
+import { setupIntTest } from "@/test/setupIntTest.ts";
+import { beforeAll, describe, it } from "@std/testing/bdd";
+import pactum from "pactum";
 
 const spec = pactum.spec;
 
-describe('GET /api/users/me', intTestDefaultOptions, () => {
+describe("GET /api/users/me", intTestDefaultOptions, () => {
   beforeAll(() => {
     setupIntTest();
   });
 
-  it('should return 200 with user details', async () => {
+  it("should return 200 with user details", async () => {
     await dbLocal.delete(user);
 
     // First sign up to get a token
     const signUpResponse: AuthResponse = await spec()
-      .post('/api/users/signup')
+      .post("/api/users/signup")
       .withBody({
-        loginId: 'meuser',
-        password: 'password123',
+        loginId: "meuser",
+        password: "password123",
       })
       .expectStatus(200)
-      .returns('res.body');
+      .returns("res.body");
 
     const accessToken = signUpResponse.access_token;
 
     await spec()
-      .get('/api/users/me')
+      .get("/api/users/me")
       .withBearerToken(accessToken)
       .expectStatus(200)
       .expectJsonLike({
         ulid: /.*/,
-        role: 'member',
+        role: "member",
       });
   });
 
-  it('should return 401 when no token', async () => {
+  it("should return 401 when no token", async () => {
     await spec()
-      .get('/api/users/me')
+      .get("/api/users/me")
       .expectStatus(401)
       .expectJsonLike({
-        'code': '',
-        'error': 'DOMAIN_UNAUTHORIZED_ERROR',
-        'status': 401,
-        'timestamp': /.*/,
+        "code": "",
+        "error": "DOMAIN_UNAUTHORIZED_ERROR",
+        "status": 401,
+        "timestamp": /.*/,
       });
   });
 
-  it('should return 401 when invalid token', async () => {
+  it("should return 401 when invalid token", async () => {
     await spec()
-      .get('/api/users/me')
-      .withHeaders('Authorization', 'Bearer invalid-token-value')
+      .get("/api/users/me")
+      .withHeaders("Authorization", "Bearer invalid-token-value")
       .expectStatus(401)
       .expectJsonLike({
-        'code': '',
-        'error': 'DOMAIN_UNAUTHORIZED_ERROR',
-        'status': 401,
-        'timestamp': /.*/,
+        "code": "",
+        "error": "DOMAIN_UNAUTHORIZED_ERROR",
+        "status": 401,
+        "timestamp": /.*/,
       });
+  });
+  it("should reject a refresh token submitted as a bearer access token", async () => {
+    const tokens: AuthResponse = await spec().post("/api/users/signup")
+      .withBody({
+        loginId: `bearer-purpose-${crypto.randomUUID()}`,
+        password: "password123",
+      })
+      .expectStatus(200).returns("res.body");
+    await spec().get("/api/users/me").withBearerToken(tokens.refresh_token)
+      .expectStatus(401);
   });
 });

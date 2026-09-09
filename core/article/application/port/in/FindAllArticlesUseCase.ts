@@ -1,4 +1,4 @@
-import { Article } from '@/core/article/domain/Article.ts';
+import type { Article } from "@/core/article/domain/Article.ts";
 
 export interface FindAllArticlesUseCase {
   findAll(): Promise<Article[]>;

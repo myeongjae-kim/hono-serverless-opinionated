@@ -5,4 +5,4 @@ const flags = parseArgs(Deno.args, {
   string: ["port"],
 });
 
-Deno.serve({port: Number(flags.port) || 8080}, serverApp.fetch)
+Deno.serve({ port: Number(flags.port) || 8080 }, serverApp.fetch);
